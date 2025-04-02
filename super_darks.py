@@ -15,13 +15,9 @@ import settings as s
 calibration_folder = Path(s.calibration_folder)
 imgs = ImageFileCollection(calibration_folder)
 
-# print(im_collection.filter(obstype="dark").summary["file", "obstype", "exptime"])
-# print(f"There are {len(imgs.filter(obstype='DARK', exptime=60).files)} 60s darks.")
-# print(f"There are {len(imgs.filter(obstype='DARK', exptime=3).files)} 3s darks.")
+print(imgs.filter(obstype="dark").summary["file", "obstype", "exptime"])
 
-times = set(
-    imgs.filter(obstype="dark").summary["exptime"]
-)  # 3 second exposures mostly measure read noise
+times = [3, 60] # 3 second exposures mostly measure read noise
 
 for time in times:
     to_combine = []
@@ -44,7 +40,7 @@ for time in times:
         "INSTRUME",
         "TELESCOP",
         "OBJECT",
-        "OBSTYPE",
+        # "OBSTYPE",
         "DATE-OBS",
         "READMODE",
         "EXPTIME",

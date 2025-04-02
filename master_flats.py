@@ -23,17 +23,22 @@ def inv_median(a):
 
 calibration_folder = Path(s.calibration_folder)
 imgs = ccdp.ImageFileCollection(calibration_folder)
-filters = set(imgs.filter(obstype="flat").summary["filter"])
+filters = set(imgs.filter(obstype="flat").summary["filter"]) # seems to change order?
+filters = ["J_G0802", "H_G0803"]
 
 print(imgs.filter(obstype="flat").summary["file", "obstype", "exptime", "filter"])
 # sci_image = ccdp.ImageFileCollection(s.science_folder)
 # print(sci_image.summary["obstype", "exptime", "filter"])
 # print(filters)
 
-dark_hdul = fits.open(calibration_folder / "super_dark_60.0s.fits")
-dark = CCDData(dark_hdul[0].data[0], unit=u.adu)
+dark_hdul_60 = fits.open(calibration_folder / s.dark_60)
+dark_60 = CCDData(dark_hdul_60[0].data[0], unit=u.adu)
+dark_hdul_3 = fits.open(calibration_folder / s.dark_3)
+dark_3 = CCDData(dark_hdul_3[0].data[0], unit=u.adu)
+darks = [dark_60, dark_3]
+dark_hduls = [dark_hdul_60, dark_hdul_3]
 
-for filter in filters:
+for filter, dark, dark_hdul in zip(filters, darks, dark_hduls):
     to_combine = []
     # somehow, half the J band flats are darks?
     for filename in imgs.filter(obstype="flat", filter=filter).files[:5]:

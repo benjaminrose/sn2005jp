@@ -9,8 +9,8 @@ science_folder = "./data"
 j_flat = "super_flat_J_G0802.fits"
 h_flat = "super_flat_H_G0803.fits"
 hot_pixels = "hot_pixels.fits"
-dark_60 = "super_dark_60.0s.fits"
-dark_3 = "super_dark_3.0s.fits"
+dark_60 = "super_dark_60s.fits"
+dark_3 = "super_dark_3s.fits"
 
 ############
 # GEMINI F2
@@ -33,10 +33,10 @@ dark_current = 0.5  # e-/s/pix
 dark_current_exposure_need = read_noise_single / dark_current  # 29 s
 
 # Reduction
-# min_pixel = 350
-# max_pixel = 1750
-min_pixel = 1200
-max_pixel = 1550
+min_pixel = 350
+max_pixel = 1750
+# min_pixel = 1200
+# max_pixel = 1550
 
 
 ##################

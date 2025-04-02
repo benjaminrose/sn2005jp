@@ -14,23 +14,25 @@ calibration_folder = Path(s.calibration_folder)
 
 cal_imgs = ccdp.ImageFileCollection(s.calibration_folder)
 sci_imgs = ccdp.ImageFileCollection(s.science_folder)
-filters = list(set(sci_imgs.summary["filter"]))
+filters = list(set(sci_imgs.summary["filter"]))  # changes order?
+filters = ["J_G0802", "H_G0803"]
 # print(sci_imgs.summary["filter", "exptime", "file"])
 
 filter = filters[0]
+print(filter)
 for filename in sci_imgs.filter(filter=filter).files:
     with fits.open(filename) as hdul_sci:
         sci = CCDData(hdul_sci[1].data[0], unit=u.adu)
     sci = ccdp.trim_image(sci[s.min_pixel : s.max_pixel, s.min_pixel : s.max_pixel])
-    s.show_image(sci.data)
+    s.show_image(sci.data, percl=99)
     plt.title("sci")
     print("sci max:", sci.data.max())
 
-    with fits.open(calibration_folder / s.dark_3) as hdul_dark:
+    with fits.open(calibration_folder / s.dark_60) as hdul_dark:
         dark = CCDData(hdul_dark[0].data[0], unit=u.adu)
     dark = ccdp.trim_image(dark[s.min_pixel : s.max_pixel, s.min_pixel : s.max_pixel])
-    # s.show_image(dark.data)
-    # plt.title("dark")
+    s.show_image(dark.data, percl=99)
+    plt.title("dark")
     print("dark max:", dark.data.max())
 
     with fits.open(calibration_folder / f"super_flat_{filter}.fits") as hdul_flat:
@@ -48,18 +50,24 @@ for filename in sci_imgs.filter(filter=filter).files:
         dark,
         data_exposure=hdul_sci[0].header["EXPTIME"] * u.s,
         dark_exposure=hdul_dark[0].header["EXPTIME"] * u.s,
-        scale=True,
+        scale=False,
     )
+    # sci_dark_subtracted = sci.copy()
+    # sci_dark_subtracted.data = sci.data - dark.data
+    
+    s.show_image(sci_dark_subtracted.data, percl=99)
+    plt.title("dark subtracted")
     sci_final = ccdp.flat_correct(sci_dark_subtracted, flat)
     print("final max:", sci_final.data.max())
-    s.show_image(sci_final.data)
+    s.show_image(sci_final.data, percl=99)
     plt.title("reduced")
 
     # sci_other = (sci.data - dark.data) / flat.data
     # s.show_image(sci_other)
     # plt.title("manual")
+    sci_final.write(f"SN2005jp_{filter}.fits", overwrite=True)
 
-    plt.show()
-    from sys import exit
-
-    exit()
+#     plt.show()
+#     from sys import exit
+# 
+#     exit()
