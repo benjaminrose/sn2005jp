@@ -1,6 +1,5 @@
 from astropy import visualization as aviz
 from astropy.nddata.blocks import block_reduce
-from astropy.nddata.utils import Cutout2D
 from matplotlib import pyplot as plt
 
 calibration_folder = "./cal"
@@ -33,10 +32,13 @@ dark_current = 0.5  # e-/s/pix
 dark_current_exposure_need = read_noise_single / dark_current  # 29 s
 
 # Reduction
-min_pixel = 350
-max_pixel = 1750
+# at 1196, 946; 1364, 1115; 
+min_pixel = 650
+max_pixel = 1665
 # min_pixel = 1200
 # max_pixel = 1550
+# min_pixel = 0
+# max_pixel = 2028
 
 
 ##################
